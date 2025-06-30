@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura | Portfólio Etec Darcy Pereira</title>
+    
+    <link rel="icon" href="imagens/aurabranco.jpg" type="image/png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Cores e Fontes */
+        :root {
+            --cor-principal: #8e44ad; /* Roxo principal */
+            --cor-secundaria: #6c3a88; /* Roxo mais escuro para títulos/texto secundário */
+            --cor-fundo: #ecf0f1; /* Cinza claro */
+            --cor-texto: #333;
+            --cor-texto-claro: #fff;
+            --sombra-caixa: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --transicao-suave: all 0.3s ease-in-out;
+            --transicao-rapida: all 0.2s ease-out;
+
+            /* Cores do raio (mantidas com as variáveis, mas já são roxas) */
+            --cor-raio: #8e44ad;
+            --cor-raio-hover: #7f379f;
+        }
+
+        /* Estilos Globais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto);
+            padding-top: 110px; /* Mantém o espaço para o cabeçalho fixo */
+            /* Cursor padrão do navegador - sem customização aqui */
+        }
+
+        /* Cursor padrão "pointer" para elementos clicáveis */
+        a, button, .project-card {
+            cursor: pointer; /* A famosa "mãozinha" */
+        }
+        
+        /* Cabeçalho Fixo */
+        .header {
+            background-color: var(--cor-texto-claro);
+            box-shadow: var(--sombra-caixa);
+            padding: 10px 0; /* Ainda mais compacto */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            text-align: center;
+            transition: var(--transicao-suave);
+        }
+
+        .header.scrolled {
+            padding: 8px 0; /* Diminui um pouco mais ao rolar */
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px; /* Espaçamento menor no cabeçalho */
+        }
+
+        .header-content .logo {
+            width: auto;
+        }
+        /* Estilo específico para a logo da Aura */
+        .header-content .logo.aura {
+            height: 100px; /* Altura ajustada para o cabeçalho mais compacto */
+        }
+        /* Estilo específico para a logo da Etec */
+        .header-content .logo.etec {
+            height: 70px; /* Altura ajustada para o cabeçalho mais compacto */
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 100px; /* Ajuste para garantir visibilidade em telas médias */
+            }
+            .header-content {
+                gap: 10px;
+            }
+            .header-content .logo.aura {
+                height: 70px; /* Ajuste para telas médias */
+            }
+            .header-content .logo.etec {
+                height: 45px; /* Ajuste para telas médias */
+            }
+            .header h1 {
+                font-size: 1.6rem; /* Reduzindo fonte do h1 */
+            }
+            .header p {
+                font-size: 0.75rem; /* Reduzindo fonte do p */
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding-top: 85px; /* Ajuste para o header fixo em telas menores */
+            }
+            .header {
+                padding: 8px 0;
+            }
+            .header-content {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .header-content .logo.aura {
+                height: 55px;
+            }
+            .header-content .logo.etec {
+                height: 35px;
+            }
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            .header p {
+                font-size: 0.7rem;
+            }
+        }
+
+        .header h1 {
+            font-size: 1.8rem; /* Ajuste para header fixo e compacto */
+            color: var(--cor-principal);
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .header-content h1 span {
+            display: none; 
+        }
+
+        .header p {
+            font-size: 0.85rem; /* Ajuste para header fixo e compacto */
+            max-width: 600px;
+            margin: 10px auto 0; /* Aumentado a margem superior para afastar do h1/logos */
+            color: var(--cor-secundaria);
+            font-weight: 400;
+        }
+
+        /* Seção de Projetos */
+        .portfolio-section {
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .portfolio-section h2 {
+            font-size: 2.5rem;
+            color: var(--cor-secundaria);
+            margin-bottom: 50px;
+            font-weight: 600;
+            position: relative;
+            display: inline-block;
+        }
+
+        .portfolio-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--cor-principal);
+            border-radius: 5px;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .project-card {
+            background-color: var(--cor-texto-claro);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--sombra-caixa);
+            transition: var(--transicao-suave);
+            text-align: left;
+            position: relative;
+            cursor: pointer; /* Mantém o cursor para o card inteiro */
+            border: 2px solid transparent;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-color: var(--cor-principal);
+        }
+
+        .project-card:focus-within {
+            border-color: var(--cor-principal);
+            box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.5);
+            outline: none;
+        }
+
+        .project-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .project-info {
+            padding: 25px;
+        }
+
+        .project-info h3 {
+            font-size: 1.5rem;
+            color: var(--cor-secundaria);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .project-info p {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .project-link {
+            display: inline-block;
+            background-color: var(--cor-principal);
+            color: var(--cor-texto-claro);
+            padding: 12px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transicao-rapida);
+            white-space: nowrap;
+        }
+        
+        .project-link:hover {
+            background-color: var(--cor-raio-hover);
+            transform: translateY(-2px);
+        }
+
+        .project-link.disabled {
+            background-color: #bdc3c7 !important;
+            cursor: not-allowed !important;
+            opacity: 0.8;
+            transform: none !important;
+        }
+        .project-link.disabled:hover {
+            background-color: #bdc3c7 !important;
+        }
+
+        /* Rodapé */
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+            border-top: 1px solid #ddd;
+            color: #777;
+        }
+
+        .footer p {
+            font-size: 0.9rem;
+        }
+
+        /* Animação para cards de projeto */
+        .project-card.animate {
+            animation: fadeInSlideUp 0.8s ease-out forwards;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Estilos do Modal (Pop-up para adicionar projeto) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .modal.show {
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: var(--cor-texto-claro);
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: var(--sombra-caixa);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            transform: translateY(-50px);
+            opacity: 0;
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .close-button {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: var(--cor-principal);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-content h3 {
+            color: var(--cor-secundaria);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .modal-content label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--cor-secundaria);
+            font-weight: 600;
+        }
+
+        .modal-content input[type="text"],
+        .modal-content textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.2s ease-in-out;
+        }
+
+        .modal-content input[type="text"]:focus,
+        .modal-content textarea:focus {
+            border-color: var(--cor-principal);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.2);
+        }
+
+        .modal-content textarea {
+            resize: vertical;
+            min-height: 80px;
+            max-height: 150px;
+        }
+
+        .modal-content button {
+            background-color: var(--cor-principal);
+            color: var(--cor-texto-claro);
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transicao-rapida);
+            width: 100%;
+        }
+
+        .modal-content button:hover {
+            background-color: var(--cor-raio-hover);
+            transform: translateY(-2px);
+        }
+        /* Cor de clique do botão */
+        .modal-content button:active {
+            background-color: var(--cor-raio-hover); /* Mantém a cor mais escura no clique */
+            transform: translateY(0); /* Evita que ele "suba" durante o clique, dando sensação de click */
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); /* Sombra interna para dar efeito de "pressionado" */
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header" id="home">
+        <div class="container">
+            <div class="header-content">
+                <img src="imagens/aurapreto.png" alt="Logo da Aura" class="logo aura">
+                
+                <h1>Aura</h1>
+
+                <img src="imagens/eteccps.png" alt="Logo da Etec Darcy Pereira" class="logo etec">
+            </div>
+            <p>Conheça os projetos incríveis que criamos para a Etec Darcy Pereira.</p>
+        </div>
+    </header>
+
+    <main class="portfolio-section" id="portfolio">
+        <div class="container">
+            <h2>Nossos Projetos</h2>
+            <div class="project-grid" id="projectGrid">
+                <div class="project-card">
+                    <img src="imagens/achados.jpg" alt="Imagem do projeto de Achados e Perdidos">
+                    <div class="project-info">
+                        <h3>Achados e Perdidos</h3>
+                        <p>Plataforma para facilitar a busca e devolução de itens perdidos dentro da escola, conectando alunos e funcionários.</p>
+                        <a href="https://joaofer10.github.io/aura2/" class="project-link" target="_blank" aria-label="Acessar Projeto Achados e Perdidos">Ver Projeto</a>
+                    </div>
+                </div>
+                
+                <div class="project-card add-new-project-card">
+                    <img src="https://via.placeholder.com/600x400.png?text=Adicionar+Novo+Projeto" alt="Adicionar Novo Projeto">
+                    <div class="project-info">
+                        <h3>Adicionar Novo Projeto</h3>
+                        <p>Clique aqui para expandir o portfólio com um novo projeto da Etec Darcy Pereira.</p>
+                        <button id="addProjectBtn" class="project-link" style="width: auto;">+ Criar Novo Projeto</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Aura Dev. Todos os direitos reservados. Feito com ❤️ para a Etec Darcy Pereira.</p>
+        </div>
+    </footer>
+
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3>Adicionar Novo Projeto</h3>
+            <form id="newProjectForm">
+                <label for="projectTitle">Título do Projeto:</label>
+                <input type="text" id="projectTitle" placeholder="Ex: Sistema de Biblioteca">
+
+                <label for="projectUrl">URL do Projeto:</label>
+                <input type="text" id="projectUrl" placeholder="Ex: https://seusite.com/biblioteca">
+
+                <label for="projectImageUrl">URL da Imagem do Projeto:</label>
+                <input type="text" id="projectImageUrl" placeholder="Ex: imagens/seu-projeto.jpg ou https://exemplo.com/imagem.png">
+
+                <label for="projectDescription">Descrição Breve:</label>
+                <textarea id="projectDescription" placeholder="Descreva o objetivo do projeto..."></textarea>
+
+                <button type="submit">Adicionar Projeto</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth Scroll para links internos (ainda funciona para a navegação normal, caso tenha)
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Animação de entrada para os cards de projeto (Intersection Observer)
+            const projectCards = document.querySelectorAll('.project-card');
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.2
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate');
+                    }
+                });
+            }, observerOptions);
+
+            projectCards.forEach(card => {
+                observer.observe(card);
+            });
+
+            // Efeito de encolhimento do header (mantido)
+            window.addEventListener('scroll', () => {
+                const header = document.querySelector('.header');
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            // Lógica do Modal para Adicionar Novo Projeto
+            const addProjectBtn = document.getElementById('addProjectBtn');
+            const projectModal = document.getElementById('projectModal');
+            const closeButton = document.querySelector('.close-button');
+            const newProjectForm = document.getElementById('newProjectForm');
+            const projectGrid = document.getElementById('projectGrid');
+
+            addProjectBtn.addEventListener('click', () => {
+                projectModal.style.display = 'flex';
+                setTimeout(() => projectModal.classList.add('show'), 10);
+            });
+
+            closeButton.addEventListener('click', () => {
+                projectModal.classList.remove('show');
+                setTimeout(() => projectModal.style.display = 'none', 300);
+                newProjectForm.reset();
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target == projectModal) {
+                    projectModal.classList.remove('show');
+                    setTimeout(() => projectModal.style.display = 'none', 300);
+                    newProjectForm.reset();
+                }
+            });
+
+            newProjectForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const title = document.getElementById('projectTitle').value.trim();
+                const url = document.getElementById('projectUrl').value.trim();
+                const imageUrl = document.getElementById('projectImageUrl').value.trim(); 
+                const description = document.getElementById('projectDescription').value.trim();
+
+                // Validação JavaScript
+                if (!title || !url || !imageUrl || !description) { 
+                    alert('Por favor, preencha todos os campos!');
+                    return;
+                }
+
+                // Cria o novo card de projeto
+                const newProjectCard = document.createElement('div');
+                newProjectCard.classList.add('project-card');
+                
+                newProjectCard.innerHTML = `
+                    <img src="${imageUrl}" alt="Imagem do projeto ${title}">
+                    <div class="project-info">
+                        <h3>${title}</h3>
+                        <p>${description}</p>
+                        <a href="${url}" class="project-link" target="_blank" aria-label="Acessar Projeto ${title}">Acessar Site</a>
+                    </div>
+                `;
+
+                // Adiciona o novo card antes do card "Adicionar Novo Projeto"
+                const addNewProjectCard = document.querySelector('.add-new-project-card');
+                projectGrid.insertBefore(newProjectCard, addNewProjectCard);
+
+                // Aplica a animação ao novo card
+                newProjectCard.classList.add('animate');
+
+                // Fecha o modal e limpa o formulário
+                projectModal.classList.remove('show');
+                setTimeout(() => projectModal.style.display = 'none', 300);
+                newProjectForm.reset();
+                
+                alert('Projeto "' + title + '" adicionado com sucesso!');
+            });
+        });
+    </script>
+</body>
+</html>
