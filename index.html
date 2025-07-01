@@ -44,7 +44,6 @@
             background-color: var(--cor-fundo);
             color: var(--cor-texto);
             padding-top: 110px; /* Mantém o espaço para o cabeçalho fixo */
-            /* Cursor padrão do navegador - sem customização aqui */
         }
 
         /* Cursor padrão "pointer" para elementos clicáveis */
@@ -52,6 +51,12 @@
             cursor: pointer; /* A famosa "mãozinha" */
         }
         
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
         /* Cabeçalho Fixo */
         .header {
             background-color: var(--cor-texto-claro);
@@ -196,7 +201,7 @@
             transition: var(--transicao-suave);
             text-align: left;
             position: relative;
-            cursor: pointer; /* Mantém o cursor para o card inteiro */
+            cursor: pointer;
             border: 2px solid transparent;
             opacity: 0;
             transform: translateY(20px);
@@ -417,6 +422,87 @@
             transform: translateY(0); /* Evita que ele "suba" durante o clique, dando sensação de click */
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); /* Sombra interna para dar efeito de "pressionado" */
         }
+
+        /* --- Início: Melhorias de Responsividade para Mobile (Max-width 600px) --- */
+        @media (max-width: 600px) {
+            .portfolio-section {
+                padding: 30px 0; /* Menos padding para telas menores */
+            }
+
+            .project-grid {
+                grid-template-columns: 1fr; /* Uma única coluna */
+                gap: 20px; /* Reduz o espaçamento entre os cards */
+            }
+
+            .project-card {
+                padding: 0; /* Remove padding externo do card */
+                text-align: center; /* Centraliza o conteúdo dentro do card */
+            }
+
+            .project-card img {
+                height: 180px; /* Reduz a altura da imagem para ser mais compacta */
+                border-radius: 15px 15px 0 0; /* Arredonda só o topo */
+            }
+
+            .project-info {
+                padding: 15px; /* Reduz o padding interno da informação do projeto */
+            }
+
+            .project-info h3 {
+                font-size: 1.3rem; /* Título um pouco menor */
+                margin-bottom: 5px;
+            }
+
+            .project-info p {
+                font-size: 0.9rem; /* Descrição menor */
+                /* Controla a exibição da descrição completa */
+                max-height: 3em; /* Limita a altura inicial a 3 linhas */
+                overflow: hidden; /* Esconde o texto que excede a altura */
+                text-overflow: ellipsis; /* Adiciona '...' se o texto for cortado */
+                white-space: normal; /* Permite quebra de linha */
+                margin-bottom: 10px;
+                transition: max-height 0.3s ease-out, opacity 0.3s ease-out; /* Transição para a expansão */
+                opacity: 1; /* Garante que a descrição inicial esteja visível */
+            }
+
+            /* Esconde o botão de link inicialmente nos cards de projeto */
+            .project-card .project-link {
+                display: none;
+                margin-top: 15px; /* Adiciona margem após a expansão */
+                opacity: 0; /* Esconde com opacidade para transição */
+                transition: opacity 0.3s ease-out;
+            }
+
+            /* Estado expandido do card */
+            .project-card.expanded {
+                /* Remove o limite de altura da descrição */
+                max-height: none; 
+            }
+
+            .project-card.expanded .project-info p {
+                max-height: none; /* Mostra todo o conteúdo da descrição */
+                overflow: visible;
+                text-overflow: clip;
+                opacity: 1; /* Garante visibilidade durante a transição */
+            }
+
+            .project-card.expanded .project-link {
+                display: inline-block; /* Mostra o botão quando expandido */
+                opacity: 1; /* Mostra com opacidade para transição */
+            }
+
+            /* Estilo específico para o card "Adicionar Novo Projeto" no mobile */
+            .add-new-project-card .project-info p {
+                max-height: none; /* A descrição do "Adicionar Novo Projeto" sempre fica visível */
+                overflow: visible;
+                text-overflow: clip;
+            }
+            .add-new-project-card .project-link {
+                display: inline-block; /* O botão "Criar Novo Projeto" sempre visível */
+                opacity: 1;
+            }
+        }
+        /* --- Fim: Melhorias de Responsividade para Mobile --- */
     </style>
 </head>
 <body>
@@ -589,6 +675,15 @@
                 // Aplica a animação ao novo card
                 newProjectCard.classList.add('animate');
 
+                // Re-observa os cards para a funcionalidade de clique/expansão
+                observer.unobserve(addNewProjectCard); // Remove o antigo observador
+                observer.observe(newProjectCard); // Adiciona o novo card ao observador de animação
+
+                // Adiciona a funcionalidade de clique para expansão aos novos cards também
+                if (window.innerWidth <= 600) { // Aplica apenas para mobile
+                    newProjectCard.addEventListener('click', toggleProjectCardExpansion);
+                }
+
                 // Fecha o modal e limpa o formulário
                 projectModal.classList.remove('show');
                 setTimeout(() => projectModal.style.display = 'none', 300);
@@ -596,6 +691,50 @@
                 
                 alert('Projeto "' + title + '" adicionado com sucesso!');
             });
+
+            // Função para alternar a classe 'expanded' nos cards
+            function toggleProjectCardExpansion(event) {
+                // Previne que o clique no link dentro do card também ative a expansão/colapso
+                if (event.target.closest('.project-link') || event.target.tagName === 'BUTTON') {
+                    return; 
+                }
+                // Previne que o clique no "Adicionar Novo Projeto" cause expansão indevida
+                if (this.classList.contains('add-new-project-card')) {
+                    return;
+                }
+                this.classList.toggle('expanded');
+            }
+
+            // Adiciona listener de clique para todos os cards de projeto (exceto o de adicionar novo)
+            // Apenas em telas menores que 600px
+            if (window.innerWidth <= 600) {
+                document.querySelectorAll('.project-card:not(.add-new-project-card)').forEach(card => {
+                    card.addEventListener('click', toggleProjectCardExpansion);
+                });
+            }
+
+            // Listener para redefinir listeners de clique ao redimensionar a janela
+            // (Útil ao testar responsividade em desktop)
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    if (window.innerWidth <= 600) {
+                        document.querySelectorAll('.project-card:not(.add-new-project-card)').forEach(card => {
+                            // Garante que o listener não seja adicionado múltiplas vezes
+                            card.removeEventListener('click', toggleProjectCardExpansion); 
+                            card.addEventListener('click', toggleProjectCardExpansion);
+                            card.classList.remove('expanded'); // Colapsa os cards ao redimensionar para mobile
+                        });
+                    } else {
+                        document.querySelectorAll('.project-card:not(.add-new-project-card)').forEach(card => {
+                            card.removeEventListener('click', toggleProjectCardExpansion); // Remove listener em desktop
+                            card.classList.remove('expanded'); // Garante que não fiquem expandidos em desktop
+                        });
+                    }
+                }, 250); // Debounce para não disparar muitas vezes
+            });
+
         });
     </script>
 </body>
